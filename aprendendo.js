@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 mongoose
   .connect("mongodb://localhost/aprendendo", {
-    useMongoClient: true,
+    useNewUrlParser: true,
   })
   .then(() => {
     console.log("MongoDB conectado!");
@@ -42,7 +42,7 @@ mongoose.model("user", UserSchema);
 
 // Inserindo dados na collection
 
-const NewUser = mongoose.model("usuarios");
+const NewUser = mongoose.model("user");
 
 new NewUser({
   nome: "Ramon",
