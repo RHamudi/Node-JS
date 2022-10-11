@@ -47,7 +47,7 @@ app.get("/deletar/:id", (req, res) => {
       res.send("Postagem deletada com sucesso");
     })
     .catch((erro) => {
-      res.send("Esta postagem não existe" + erro);
+      res.send("Esta postagem não existe!s" + erro);
     });
 });
 
