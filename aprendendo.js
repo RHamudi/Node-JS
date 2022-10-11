@@ -42,7 +42,9 @@ mongoose.model("user", UserSchema);
 
 // Inserindo dados na collection
 
-new UserSchema({
+const NewUser = mongoose.model("usuarios");
+
+new NewUser({
   nome: "Ramon",
   sobrenome: "Ramons",
   email: "example@example.com",
