@@ -1,46 +1,61 @@
-var express = require("express");
-const app = express();
+// Carregando modulos
+const express = require("express");
 const { engine } = require("express-handlebars");
 const bodyParser = require("body-parser");
-const Post = require("./models/Post");
+const app = express();
+const admin = require("./routes/admin");
+const path = require("path");
+const { default: mongoose } = require("mongoose");
+const session = require("express-session");
+const flash = require("connect-flash");
+// const mongoose = require("mongoose");
 
-// Config
-// Template Engine
+// Configurações
+//sessão
+app.use(
+  session({
+    secret: "cursonode",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
+// Middleware
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
+// Body Parser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+// Handlebars
 app.engine("handlebars", engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 app.set("views", "./views");
-// Body Parser
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-// Conexão com o banco de dados
+// mongoose
+mongoose.Promise = global.Promise;
+mongoose
+  .connect("mongodb://localhost/blogapp")
+  .then(() => {
+    console.log("conectado ao mongo");
+  })
+  .catch((err) => {
+    console.log("Erro ao conectar-se ao mongo " + err);
+  });
+//public
+app.use(express.static(path.join(__dirname, "public")));
 
 // Rotas
-
 app.get("/", (req, res) => {
-  Post.findAll().then((posts) => {
-    res.render("home", {
-      Posts: posts,
-    });
-  });
+  res.send("pagina principal");
 });
 
-app.get("/cad", (req, res) => {
-  res.render("formulario");
-});
+app.use("/admin", admin);
+// Outros
 
-app.post("/add", (req, res) => {
-  Post.create({
-    titulo: req.body.titulo,
-    conteudo: req.body.conteudo,
-  })
-    .then(() => {
-      res.redirect("/");
-    })
-    .catch((error) => {
-      res.send("Houve um erro" + error);
-    });
-});
-
-app.listen(8080, () => {
-  console.log("Servidor Rodando Na URL http://localhost/8080");
+// Porta da api
+const port = 8081;
+app.listen(port, () => {
+  console.log("Servidor rodando!");
 });
