@@ -111,7 +111,7 @@ router.post("/categorias/edit", (req, res) => {
 });
 
 router.post("/categorias/deletar", (req, res) => {
-  Categoria.remove({ _id: req.body.id })
+  Categoria.deleteOne({ _id: req.body.id })
     .then(() => {
       req.flash("success_msg", "Categoria deletada com sucesso");
       res.redirect("/admin/categorias");
@@ -131,6 +131,7 @@ router.get("/postagens", (req, res) => {
 
 router.get("/postagens/add", (req, res) => {
   Categoria.find()
+    .lean()
     .then((categorias) => {
       res.render("admin/addpostagem", { categorias: categorias });
     })
